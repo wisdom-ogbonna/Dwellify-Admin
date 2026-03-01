@@ -1,12 +1,11 @@
-import { useState } from "react";
+import DateUtils from "../utils/DateFormats";
 
 function Footer() {
-  const [year] = useState(new Date().getFullYear());
-
+  
   return (
     <footer>
-      <p className="text-black absolute bottom-7 left-[50%] translate-x-[-50%] text-center">
-        {year} &copy; Bytemark Studio.
+      <p className="text-black absolute bottom-7 left-[50%] translate-x-[-50%] text-center text-sm font-medium">
+        Copyright &copy; {DateUtils.getCurrentYear()} Bytemark Studio.
       </p>
     </footer>
   );

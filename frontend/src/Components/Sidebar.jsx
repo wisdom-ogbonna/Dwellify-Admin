@@ -3,7 +3,7 @@ import {
   User,
   User2,
   Package,
-  Settings, // Imported Settings icon
+  Settings,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -20,7 +20,7 @@ function Sidebar() {
     { name: "Clients", icon: <User size={20} />, route: "/clients" },
     { name: "Agents", icon: <User2 size={20} />, route: "/agents" },
     { name: "Resources", icon: <Package size={20} />, route: "/resources" },
-    { name: "Settings", icon: <Settings size={20} />, route: "/settings" }, // Fixed icon
+    { name: "Settings", icon: <Settings size={20} />, route: "/settings" },
   ];
 
   return (
