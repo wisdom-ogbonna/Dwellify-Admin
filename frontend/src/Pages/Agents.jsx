@@ -1,29 +1,29 @@
 import { useState, useEffect } from "react";
-import { Users, Activity, UserMinus } from "lucide-react";
+import { User2, Activity, UserMinus } from "lucide-react";
 import Sidebar from "../Components/Sidebar";
+import Header from "../Components/Header";
 import KpiCards from "../Components/KpiCards";
 import SearchInput from "../Components/SearchInput";
 import DataTable from "../Components/DataTable";
 import ActionModal from "../Components/ActionModal";
 import AddButton from "../Components/AddButton";
 import Footer from "../Components/Footer";
-import { clientService } from "../services/clientService";
-import Header from "../Components/Header";
+import { agentService } from "../services/agentService";
 
-const Clients = () => {
+const Agents = () => {
   const [data, setData] = useState([]);
   const [modal, setModal] = useState({ isOpen: false, type: "", item: null });
 
   const [kpiInfo] = useState([
     {
-      label: "Total Clients",
-      val: "340k",
-      icon: <Users size={20} />,
+      label: "Total Agents",
+      val: "40k",
+      icon: <User2 size={20} />,
       color: "bg-white",
     },
     {
       label: "Active Now",
-      val: "12.5k",
+      val: "17.5k",
       icon: <Activity size={20} />,
       color: "bg-white",
     },
@@ -36,7 +36,7 @@ const Clients = () => {
   ]);
 
   useEffect(() => {
-    clientService.getAllClients().then(setData);
+    agentService.getAllAgents().then(setData);
   }, []);
 
   const handleAction = (item, type) => {
@@ -48,19 +48,18 @@ const Clients = () => {
     <div className="min-h-screen bg-[#F9FAFB] text-black font-sans antialiased">
       <Sidebar />
 
-      <main className="transition-all duration-300 md:ml-64 p-4 pt-14 md:p-8 lg:p-12">
+      <main className="transition-all duration-300 md:ml-64 p-4 pt-24 md:p-8 lg:p-12 md:pt-14">
         <div className="max-w-350 mx-auto">
-
           {/* Header Section */}
           <Header
-            flag="Directory"
-            flagSubtitle={"V0.0.0"}
-            title="Clients"
-            mission="Manage clients and resources"
-            subMission="Resource Allocation"
+            flag="STAFF"
+            flagSubtitle={"VERIFIED AGENTS"}
+            title="Agents"
+            mission="Manage agents and permissions"
+            subMission="Access control"
           />
 
-          {/* SEARCH BAR */}
+          {/* Search Bar */}
           <div className="w-full">
             <SearchInput />
           </div>
@@ -106,4 +105,4 @@ const Clients = () => {
   );
 };
 
-export default Clients;
+export default Agents;

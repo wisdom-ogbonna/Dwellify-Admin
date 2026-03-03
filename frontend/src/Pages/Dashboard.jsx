@@ -1,15 +1,12 @@
 import { useState } from "react";
-import { RefreshCw } from "lucide-react";
+import Header from "../Components/Header";
 import Sidebar from "../Components/Sidebar";
 import QuickStats from "../Components/QuickStats";
 import Footer from "../Components/Footer";
-import { useReload } from "../hooks/useReload";
-import { fetchStatsData } from "../services/fetchStats";
 import { BarPlotter } from "../Components/BarCharts";
 import { PiePlotter } from "../Components/PieCharts";
 
 const Dashboard = () => {
-  const { isLoading, reload } = useReload(fetchStatsData);
 
   const [stats] = useState([
     { label: "Total Revenue", val: "N1,240,000" },
@@ -25,43 +22,46 @@ const Dashboard = () => {
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50 relative text-black antialiased p-4 md:p-0">
+    <div className="min-h-screen bg-[#F9FAFB] text-black font-sans antialiased">
       <Sidebar />
 
-      <main className="md:ml-64 p-8 lg:p-12">
-        <header className="flex justify-between items-end mb-2 pb-6 border-b border-gray-200">
-          <div>
-            <h1 className="text-4xl font-black uppercase tracking-tight">
-              ADMIN PANEL
-            </h1>
-            <p className="mt-2 text-sm text-gray-500">
-              User & Resources Management [Data Control Centre].
-            </p>
+      <main className="transition-all duration-300 pt-14 md:ml-64 p-4 md:p-8 lg:p-12">
+        <div className="max-w-350 mx-auto">
+          <Header 
+            flag="Live System"
+            flagSubtitle={true}
+            title="Admin Panel"
+            mission="User & Resources Management"
+            subMission="Data Control Centre"
+          />
+
+          <section className="mb-10">
+            <QuickStats quikStats={stats} />
+          </section>
+
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-16">
+            <div className="bg-white p-6 md:p-8 rounded-4xl border border-zinc-200 shadow-sm transition-hover hover:shadow-md">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-1 h-6 bg-black rounded-full" />
+                <h3 className="font-bold uppercase tracking-tight text-sm text-zinc-400">
+                  Revenue Growth
+                </h3>
+              </div>
+              <BarPlotter />
+            </div>
+            <div className="bg-white p-6 md:p-8 rounded-4xl border border-zinc-200 shadow-sm transition-hover hover:shadow-md">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-1 h-6 bg-black rounded-full" />
+                <h3 className="font-bold uppercase tracking-tight text-sm text-zinc-400">
+                  User Distribution
+                </h3>
+              </div>
+              <PiePlotter />
+            </div>
           </div>
 
-          <button
-            onClick={reload}
-            disabled={isLoading}
-            className={`h-14 w-14 border-2 border-black flex items-center justify-center rounded-2xl shadow-inner bg-white transition-all
-              ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:shadow-md hover:bg-gray-100 active:scale-95"}`}
-          >
-            <span className="font-bold text-[10px] text-center leading-none">
-              <RefreshCw
-                size={16}
-                className={`inline mb-1 ${isLoading ? "animate-spin text-zinc-500" : ""}`}
-              />
-            </span>
-          </button>
-        </header>
-
-        <QuickStats quikStats={stats} />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 mb-12">
-          <BarPlotter />
-          <PiePlotter />
+          <Footer />
         </div>
-
-        <Footer />
       </main>
     </div>
   );

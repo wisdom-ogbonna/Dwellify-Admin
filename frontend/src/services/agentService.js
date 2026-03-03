@@ -1,20 +1,20 @@
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const MOCK_CLIENTS = [
+const MOCK_AGENTS = [
   {
     id: "CL-001",
-    name: "Tunde Ednut",
-    email: "tunde@example.com",
+    name: "Mock Data",
+    email: "mockData@example.com",
     phone: "+234 801 234 5678",
     status: "Active",
     joined: "2025-11-20",
     totalBookings: 12,
-    reports: 0,
+    reports: 2,
   },
   {
     id: "CL-002",
-    name: "Aisha Bello",
-    email: "aisha.b@dwellify.ng",
+    name: "Mock Data",
+    email: "mockData@example.com",
     phone: "+234 905 555 0101",
     status: "Inactive",
     joined: "2026-01-15",
@@ -23,18 +23,18 @@ const MOCK_CLIENTS = [
   },
   {
     id: "CL-003",
-    name: "Ikechukwu Okafor",
-    email: "ike@riversstate.gov.ng",
+    name: "Mock Data",
+    email: "mockData@example.com",
     phone: "+234 703 111 2233",
-    status: "Active",
+    status: "Suspended",
     joined: "2026-02-10",
     totalBookings: 5,
-    reports: 7,
+    reports: 20,
   },
   {
     id: "CL-004",
-    name: "Sarah Williams",
-    email: "sarah.w@gmail.com",
+    name: "Mock Data",
+    email: "mockData@example.com",
     phone: "+234 812 000 9988",
     status: "Pending",
     joined: "2026-02-28",
@@ -43,26 +43,26 @@ const MOCK_CLIENTS = [
   },
 ];
 
-export const clientService = {
-  getAllClients: async () => {
+export const agentService = {
+  getAllAgents: async () => {
     await delay(800);
-    return [...MOCK_CLIENTS];
+    return [...MOCK_AGENTS];
   },
 
-  getClientById: async (id) => {
+  getAgentById: async (id) => {
     await delay(500);
-    return MOCK_CLIENTS.find((client) => client.id === id);
+    return MOCK_AGENTS.find((agent) => agent.id === id);
   },
 
-  createClient: async (clientData) => {
+  createAgent: async (agentData) => {
     await delay(1000);
-    const newClient = {
-      id: `CL-00${MOCK_CLIENTS.length + 1}`,
-      ...clientData,
+    const newAgent = {
+      id: `CL-00${MOCK_AGENTS.length + 1}`,
+      ...agentData,
       joined: new Date().toISOString().split("T")[0],
       totalBookings: 0,
     };
-    console.log("Mock API: Client Created", newClient);
-    return newClient;
+    console.log("Mock API: agent Created", newAgent);
+    return newAgent;
   },
 };
