@@ -13,6 +13,7 @@ import { agentService } from "../services/agentService";
 const Agents = () => {
   const [data, setData] = useState([]);
   const [modal, setModal] = useState({ isOpen: false, type: "", item: null });
+  const [loading, setLoading] = useState(true);
 
   const [kpiInfo] = useState([
     {
@@ -36,8 +37,23 @@ const Agents = () => {
   ]);
 
   useEffect(() => {
-    agentService.getAllAgents().then(setData);
+    loadPendingRequests();
   }, []);
+
+  const loadPendingRequests = async () => {
+    setLoading(true);
+    try {
+      const res = await agentService.getAllAgents();
+      const notPending = res.filter(
+        (agent) => agent.status?.toLowerCase() !== "pending",
+      );
+      setData(notPending);
+    } catch (error) {
+      console.error("Failed to load requests:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAction = (item, type) => {
     console.log(`${type}ing user:`, item?.name);
