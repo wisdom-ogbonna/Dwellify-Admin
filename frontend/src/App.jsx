@@ -6,6 +6,7 @@ import Agents from "./Pages/Agents";
 import VerificationRequests from "./Pages/VerificatonRequests";
 // import Resources from "./Pages/Resources";
 // import Settings from "./Pages/Settings";
+import Tests from "./Pages/Tests";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Route path="/verification-requests" element={<VerificationRequests />} />
       {/*<Route path="/resources" element={<Resources />} />
       <Route path="/settings" element={<Settings />} /> */}
+      <Route path="/tests" element={<Tests />} />
     </Routes>
   );
 }

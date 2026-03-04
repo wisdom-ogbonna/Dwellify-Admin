@@ -1,10 +1,12 @@
 class DateUtils {
-
-  static formatDate(date) {
-    if (!date) return "N/A";
-    const options = { year: "numeric", month: "short", day: "numeric" };
-    return new Date(date).toLocaleDateString(undefined, options);
-  }
+  static formatDate = (timestamp) => {
+    if (!timestamp?._seconds) return "N/A";
+    return new Date(timestamp._seconds * 1000).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
 
   static getCurrentYear() {
     return new Date().getFullYear();
