@@ -1,116 +1,103 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { Users, Activity, UserMinus } from "lucide-react";
+import Sidebar from "../Components/Sidebar";
+import KpiCards from "../Components/KpiCards";
+import SearchInput from "../Components/SearchInput";
+import ClientDataTable from "../Components/ClientDataTable";
+import ActionModal from "../Components/ActionModal";
+import AddButton from "../Components/AddButton";
+import Footer from "../Components/Footer";
+import { clientService } from "../services/clientService";
+import Header from "../Components/Header";
 
-const API_URL =
-  "https://dwellify-backend-bq39.onrender.com/api/users/clients";
+const Clients = () => {
+  const [data, setData] = useState([]);
+  const [modal, setModal] = useState({ isOpen: false, type: "", item: null });
 
-export default function Agents() {
-  const [agents, setAgents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [kpiInfo] = useState([
+    {
+      label: "Total Clients",
+      val: "340k",
+      icon: <Users size={20} />,
+      color: "bg-white",
+    },
+    {
+      label: "Active Now",
+      val: "12.5k",
+      icon: <Activity size={20} />,
+      color: "bg-white",
+    },
+    {
+      label: "Suspended",
+      val: "1.2k",
+      icon: <UserMinus size={20} />,
+      color: "bg-white text-red-500",
+    },
+  ]);
 
   useEffect(() => {
-    fetchAgents();
+    clientService.getAllClients().then(setData);
   }, []);
 
-  const fetchAgents = async () => {
-    try {
-      const response = await fetch(API_URL);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch CLinets");
-      }
-
-      const data = await response.json();
-      setAgents(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  const handleAction = (item, type) => {
+    console.log(`${type}ing user:`, item?.name);
+    setModal({ isOpen: false, type: "", item: null });
   };
-
-  const formatDate = (timestamp) => {
-    if (!timestamp?._seconds) return "N/A";
-    const date = new Date(timestamp._seconds * 1000);
-    return date.toLocaleDateString();
-  };
-
-  if (loading) {
-    return <h2 style={{ textAlign: "center" }}>Loading agents...</h2>;
-  }
-
-  if (error) {
-    return (
-      <h2 style={{ textAlign: "center", color: "red" }}>
-        Error: {error}
-      </h2>
-    );
-  }
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>All Registered Agents</h1>
+    <div className="min-h-screen bg-[#F9FAFB] text-black font-sans antialiased">
+      <Sidebar />
 
-      <div style={styles.grid}>
-        {agents.length === 0 ? (
-          <p>No agents found.</p>
-        ) : (
-          agents.map((agent) => (
-            <div key={agent.uid} style={styles.card}>
-              <h2>{agent.agentDetails?.name || "No Name"}</h2>
+      <main className="transition-all duration-300 md:ml-64 p-4 pt-14 md:p-8 lg:p-12">
+        <div className="max-w-350 mx-auto">
 
-              <p><strong>Agency:</strong> {agent.agentDetails?.agencyName}</p>
-              <p><strong>Email:</strong> {agent.agentDetails?.email}</p>
-              <p><strong>Phone:</strong> {agent.phoneNumber}</p>
-              <p><strong>License ID:</strong> {agent.agentDetails?.licenseId}</p>
-              <p><strong>Address:</strong> {agent.agentDetails?.address}</p>
+          <Header
+            flag="Directory"
+            flagSubtitle={"V0.0.0"}
+            title="Clients"
+            mission="Manage clients and resources"
+            subMission="Resource Allocation"
+          />
 
-              <p>
-                <strong>Status:</strong>{" "}
-                <span
-                  style={{
-                    color:
-                      agent.agentStatus === "approved"
-                        ? "green"
-                        : agent.agentStatus === "rejected"
-                        ? "red"
-                        : "orange",
-                  }}
-                >
-                  {agent.agentStatus}
-                </span>
-              </p>
+          <div className="w-full">
+            <SearchInput />
+          </div>
 
-              <p>
-                <strong>Created:</strong>{" "}
-                {formatDate(agent.createdAt)}
-              </p>
+          <section className="mb-10">
+            <KpiCards kpiInfo={kpiInfo} />
+          </section>
+
+          <section className="bg-white rounded-4xl border border-zinc-200 shadow-sm overflow-hidden transition-hover hover:shadow-md">
+            <div className="p-1">
+              <ClientDataTable
+                data={data}
+                onSuspend={(item) =>
+                  setModal({ isOpen: true, type: "suspend", item })
+                }
+                onDelete={(item) =>
+                  setModal({ isOpen: true, type: "delete", item })
+                }
+              />
             </div>
-          ))
-        )}
-      </div>
+          </section>
+
+          <div className="mt-20">
+            <Footer />
+          </div>
+        </div>
+
+        <AddButton />
+
+        <ActionModal
+          isOpen={modal.isOpen}
+          type={modal.type}
+          targetItem={modal.item}
+          onClose={() => setModal({ ...modal, isOpen: false })}
+          onConfirm={handleAction}
+        />
+      </main>
     </div>
   );
-}
-
-const styles = {
-  container: {
-    padding: "40px",
-    fontFamily: "Arial, sans-serif",
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: "30px",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-    gap: "20px",
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    padding: "20px",
-    borderRadius: "10px",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-  },
 };
+
+export default Clients;

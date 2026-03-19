@@ -14,3 +14,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.logo {
+  background-image: url("./assets/images/dwellify_adaptive_icon_1024.png");
+  background-position: 809px;
+  background-size: 300px;
+  width: 30px;
+  height: 40px;
+}
