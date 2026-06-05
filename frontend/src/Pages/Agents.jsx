@@ -124,7 +124,6 @@ const Agents = () => {
 
       <main className="transition-all duration-300 md:ml-64 p-4 pt-24 md:p-8 lg:p-12 md:pt-14">
         <div className="max-w-350 mx-auto">
-          {/* Linked fetchData and syncTime */}
           <Header
             flag="STAFF"
             flagSubtitle="VERIFIED AGENTS"
@@ -158,6 +157,9 @@ const Agents = () => {
                   syncTime={syncTime}
                   onSuspend={(item) =>
                     setModal({ isOpen: true, type: "suspend", item })
+                  }
+                  onApprove={(item) =>
+                    setModal({ isOpen: true, type: "approve", item })
                   }
                   onDelete={(item) =>
                     setModal({ isOpen: true, type: "delete", item })

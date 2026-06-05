@@ -1,4 +1,4 @@
-import { ShieldAlert, Trash2 } from "lucide-react";
+import { ShieldAlert, ThumbsUp, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 function ActionModal({ isOpen, type, targetItem, onClose, onConfirm }) {
@@ -23,8 +23,10 @@ function ActionModal({ isOpen, type, targetItem, onClose, onConfirm }) {
         >
           {type === "delete" ? (
             <Trash2 color="white" />
-          ) : (
+          ) : type === "suspend" ? (
             <ShieldAlert color="white" />
+          ) : (
+            <ThumbsUp color="white" />
           )}
         </div>
 

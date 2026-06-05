@@ -1,7 +1,7 @@
 import { Trash2, UserCheck, Lock, Calendar, Phone } from "lucide-react";
 import DateUtils from "../utils/DateFormats";
 
-const DataTable = ({ data, onSuspend, onDelete, syncTime }) => {
+const DataTable = ({ data, onSuspend, onApprove, onDelete, syncTime }) => {
   return (
     <div className="bg-white border-2 border-black rounded-4xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-200">
@@ -123,7 +123,11 @@ const DataTable = ({ data, onSuspend, onDelete, syncTime }) => {
                   <td className="p-6 text-right">
                     <div className="flex justify-end gap-2">
                       <button
-                        onClick={() => onSuspend(agent)}
+                        onClick={
+                          isSuspended
+                            ? () => onApprove(agent)
+                            : () => onSuspend(agent)
+                        }
                         title={isSuspended ? "Approve Agent" : "Suspend Agent"}
                         className={`p-2 rounded-xl transition-all border flex items-center justify-center ${isSuspended ? "bg-green-50 text-green-600 border-green-200 hover:bg-green-100" : "bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100"}`}
                       >
