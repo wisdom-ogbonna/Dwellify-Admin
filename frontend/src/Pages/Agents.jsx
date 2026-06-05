@@ -11,9 +11,11 @@ import Footer from "../Components/Footer";
 import { agentService } from "../services/agentService";
 
 const Agents = () => {
-  const [data, setData] = useState([]);
-  const [modal, setModal] = useState({ isOpen: false, type: "", item: null });
+  const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [syncTime, setSyncTime] = useState("--:--:--");
+  const [modal, setModal] = useState({ isOpen: false, type: "", item: null });
 
   useEffect(() => {
     loadAgents();
@@ -26,7 +28,14 @@ const Agents = () => {
       const notPending = res.filter(
         (agent) => agent.agentStatus?.toLowerCase() !== "pending",
       );
-      setData(notPending);
+      setAgents(notPending);
+      setSyncTime(() =>
+        new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        }),
+      );
     } catch (error) {
       console.error("Failed to load agents:", error);
     } finally {
@@ -34,10 +43,25 @@ const Agents = () => {
     }
   };
 
+  const filteredAgents = useMemo(() => {
+    if (!searchTerm.trim()) return agents;
+    const lowerSearch = searchTerm.toLowerCase();
+    return agents.filter((agent) => {
+      const name = agent.agentDetails?.name || "";
+      const email = agent.agentDetails?.email || "";
+      const id = agent.uid || "";
+      return (
+        name.toLowerCase().includes(lowerSearch) ||
+        email.toLowerCase().includes(lowerSearch) ||
+        id.toLowerCase().includes(lowerSearch)
+      );
+    });
+  }, [agents, searchTerm]);
+
   const kpiInfo = useMemo(() => {
-    const total = data.length;
-    const active = data.filter((a) => a.agentStatus === "approved").length;
-    const suspended = data.filter(
+    const total = agents.length;
+    const active = agents.filter((a) => a.agentStatus === "approved").length;
+    const suspended = agents.filter(
       (a) => a.agentStatus === "rejected" || a.agentStatus === "suspended",
     ).length;
 
@@ -61,11 +85,36 @@ const Agents = () => {
         color: "bg-white text-red-500",
       },
     ];
-  }, [data]);
+  }, [agents]);
 
   const handleAction = async (item, type) => {
     console.log(`${type}ing agent:`, item?.agentDetails?.name);
+    if (type === "suspend") {
+      await fetch(
+        `https://dwellify-backend-bq39.onrender.com/api/admin/agents/${item.uid}/suspend`,
+        {
+          method: "PUT",
+        },
+      );
+    } else if (type === "approve") {
+      await fetch(
+        `https://dwellify-backend-bq39.onrender.com/api/admin/agents/${item.uid}/approve`,
+        {
+          method: "PUT",
+        },
+      );
+    } else if (type === "delete") {
+      await fetch(
+        `https://dwellify-backend-bq39.onrender.com/api/admin/agents/${item.uid}/delete`,
+        {
+          method: "DELETE",
+        },
+      );
+    } else {
+      console.warn("Unknown action type:", type);
+    }
 
+    await loadAgents();
     setModal({ isOpen: false, type: "", item: null });
   };
 
@@ -75,16 +124,22 @@ const Agents = () => {
 
       <main className="transition-all duration-300 md:ml-64 p-4 pt-24 md:p-8 lg:p-12 md:pt-14">
         <div className="max-w-350 mx-auto">
+          {/* Linked fetchData and syncTime */}
           <Header
             flag="STAFF"
-            flagSubtitle={"VERIFIED AGENTS"}
+            flagSubtitle="VERIFIED AGENTS"
             title="Agents"
             mission="Manage agents and permissions"
             subMission="Access control"
+            syncTime={syncTime}
+            fetchData={loadAgents}
           />
 
           <div className="w-full">
-            <SearchInput />
+            <SearchInput
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
           </div>
 
           <section className="mb-10">
@@ -99,7 +154,8 @@ const Agents = () => {
                 </div>
               ) : (
                 <DataTable
-                  data={data}
+                  data={filteredAgents}
+                  syncTime={syncTime}
                   onSuspend={(item) =>
                     setModal({ isOpen: true, type: "suspend", item })
                   }

@@ -1,7 +1,13 @@
 import { Trash2, UserCheck, Lock, Calendar, Phone, MapPin } from "lucide-react";
 import DateUtils from "../utils/DateFormats";
 
-const ClientDataTable = ({ data, onSuspend, onDelete }) => {
+const ClientDataTable = ({
+  data,
+  onSuspend,
+  onDelete,
+  syncTime,
+}) => {
+
   return (
     <div className="bg-white border-2 border-black rounded-4xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-200">
@@ -71,7 +77,7 @@ const ClientDataTable = ({ data, onSuspend, onDelete }) => {
                         <MapPin size={10} />
                         <span>{client.clientDetails?.city || "Unknown"}</span>
                       </div>
-                      <span className="text-[10px] text-zinc-400 font-medium truncate max-w-[150px]">
+                      <span className="text-[10px] text-zinc-400 font-medium truncate max-w-37.5">
                         {client.clientDetails?.address || "No address provided"}
                       </span>
                     </div>
@@ -163,7 +169,7 @@ const ClientDataTable = ({ data, onSuspend, onDelete }) => {
           </span>
         </div>
         <div className="text-[10px] font-black uppercase text-zinc-400">
-          Last Sync: {new Date().toLocaleTimeString()}
+          Last Sync: {syncTime}
         </div>
       </div>
     </div>

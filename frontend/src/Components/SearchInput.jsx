@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, ArrowRight, Filter } from "lucide-react";
 
-function SearchInput() {
+function SearchInput({searchTerm, setSearchTerm}) {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
 
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -16,6 +14,7 @@ function SearchInput() {
         <input
           className="w-full bg-white border-2 border-black p-4 pl-12 rounded-2xl font-bold placeholder:text-gray-400 focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
           placeholder="Search by name, email or id..."
+          value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>

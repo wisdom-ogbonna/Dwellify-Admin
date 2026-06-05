@@ -4,7 +4,7 @@ import {
   User2,
   Users,
   ShieldAlert,
-  Package,
+  AlertTriangle,
   Settings,
   Menu,
   X,
@@ -25,7 +25,7 @@ function Sidebar() {
     { name: "Clients", icon: <Users size={20} />, route: "/clients" },
     { name: "Agents", icon: <User2 size={20} />, route: "/agents" },
     { name: "Verification Requests", icon: <ShieldAlert size={20} />, route: "/verification-requests" },
-    { name: "Resources", icon: <Package size={20} />, route: "/resources" },
+    { name: "Reports", icon: <AlertTriangle size={20} />, route: "/reports" },
     { name: "Settings", icon: <Settings size={20} />, route: "/settings" },
   ];
 
