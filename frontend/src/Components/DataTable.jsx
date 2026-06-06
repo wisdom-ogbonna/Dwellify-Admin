@@ -36,6 +36,7 @@ const DataTable = ({ data, onSuspend, onApprove, onDelete, syncTime }) => {
               const isSuspended =
                 agent.agentStatus?.toLowerCase() === "rejected" ||
                 agent.agentStatus?.toLowerCase() === "suspended";
+              const isPending = agent.agentStatus?.toLowerCase() === "pending" || agent.agentStatus?.toLowerCase() === "submitted";
               const agentName = agent.agentDetails?.name || "N/A";
 
               return (
@@ -47,13 +48,13 @@ const DataTable = ({ data, onSuspend, onApprove, onDelete, syncTime }) => {
                   <td className="p-6 whitespace-nowrap">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`h-10 w-10 rounded-full flex items-center justify-center text-white text-xs font-black transition-colors ${isSuspended ? "bg-zinc-400" : "bg-black"}`}
+                        className={`h-10 w-10 rounded-full flex items-center justify-center text-white text-xs font-black transition-colors ${isSuspended || isPending ? "bg-zinc-400" : "bg-black"}`}
                       >
                         {agentName.substring(0, 2).toUpperCase()}
                       </div>
                       <div>
                         <div
-                          className={`text-sm font-black ${isSuspended ? "text-zinc-400 line-through" : "text-black"}`}
+                          className={`text-sm font-black ${isSuspended || isPending ? "text-zinc-400 line-through" : "text-black"}`}
                         >
                           {agentName}
                         </div>
@@ -124,14 +125,14 @@ const DataTable = ({ data, onSuspend, onApprove, onDelete, syncTime }) => {
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={
-                          isSuspended
+                          isSuspended || isPending
                             ? () => onApprove(agent)
                             : () => onSuspend(agent)
                         }
-                        title={isSuspended ? "Approve Agent" : "Suspend Agent"}
-                        className={`p-2 rounded-xl transition-all border flex items-center justify-center ${isSuspended ? "bg-green-50 text-green-600 border-green-200 hover:bg-green-100" : "bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100"}`}
+                        title={isSuspended || isPending ? "Approve Agent" : "Suspend Agent"}
+                        className={`p-2 rounded-xl transition-all border flex items-center justify-center ${isSuspended || isPending ? "bg-green-50 text-green-600 border-green-200 hover:bg-green-100" : "bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100"}`}
                       >
-                        {isSuspended ? (
+                        {isSuspended || isPending ? (
                           <UserCheck size={18} />
                         ) : (
                           <Lock size={18} />

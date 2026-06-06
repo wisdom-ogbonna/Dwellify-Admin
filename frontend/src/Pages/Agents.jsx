@@ -6,7 +6,6 @@ import KpiCards from "../Components/KpiCards";
 import SearchInput from "../Components/SearchInput";
 import DataTable from "../Components/DataTable";
 import ActionModal from "../Components/ActionModal";
-import AddButton from "../Components/AddButton";
 import Footer from "../Components/Footer";
 import { agentService } from "../services/agentService";
 
@@ -26,7 +25,9 @@ const Agents = () => {
     try {
       const res = await agentService.getAllAgents();
       const notPending = res.filter(
-        (agent) => agent.agentStatus?.toLowerCase() !== "pending",
+        (agent) =>
+          agent.agentStatus?.toLowerCase() !== "pending" &&
+          agent.agentStatus?.toLowerCase() !== "submitted",
       );
       setAgents(notPending);
       setSyncTime(() =>
@@ -44,17 +45,31 @@ const Agents = () => {
   };
 
   const filteredAgents = useMemo(() => {
-    if (!searchTerm.trim()) return agents;
-    const lowerSearch = searchTerm.toLowerCase();
-    return agents.filter((agent) => {
-      const name = agent.agentDetails?.name || "";
-      const email = agent.agentDetails?.email || "";
-      const id = agent.uid || "";
-      return (
-        name.toLowerCase().includes(lowerSearch) ||
-        email.toLowerCase().includes(lowerSearch) ||
-        id.toLowerCase().includes(lowerSearch)
-      );
+    let result = agents;
+    if (searchTerm.trim()) {
+      const lowerSearch = searchTerm.toLowerCase();
+      result = agents.filter((agent) => {
+        const name = agent.agentDetails?.name || "";
+        const email = agent.agentDetails?.email || "";
+        const id = agent.uid || "";
+        return (
+          name.toLowerCase().includes(lowerSearch) ||
+          email.toLowerCase().includes(lowerSearch) ||
+          id.toLowerCase().includes(lowerSearch)
+        );
+      });
+    }
+
+    return [...result].sort((a, b) => {
+      const statusA = a.agentStatus?.toLowerCase() || "";
+      const statusB = b.agentStatus?.toLowerCase() || "";
+
+      if (statusA === "suspended" && statusB !== "suspended") return -1;
+      if (statusA !== "suspended" && statusB === "suspended") return 1;
+
+      const nameA = a.agentDetails?.name || "";
+      const nameB = b.agentDetails?.name || "";
+      return nameA.localeCompare(nameB);
     });
   }, [agents, searchTerm]);
 
@@ -88,33 +103,20 @@ const Agents = () => {
   }, [agents]);
 
   const handleAction = async (item, type) => {
-    console.log(`${type}ing agent:`, item?.agentDetails?.name);
-    if (type === "suspend") {
-      await fetch(
-        `https://dwellify-backend-bq39.onrender.com/api/admin/agents/${item.uid}/suspend`,
-        {
-          method: "PUT",
-        },
-      );
-    } else if (type === "approve") {
-      await fetch(
-        `https://dwellify-backend-bq39.onrender.com/api/admin/agents/${item.uid}/approve`,
-        {
-          method: "PUT",
-        },
-      );
-    } else if (type === "delete") {
-      await fetch(
-        `https://dwellify-backend-bq39.onrender.com/api/admin/agents/${item.uid}/delete`,
-        {
-          method: "DELETE",
-        },
-      );
-    } else {
-      console.warn("Unknown action type:", type);
-    }
+    try {
+      const baseUrl = `https://dwellify-backend-bq39.onrender.com/api/admin/agents/${item.uid}`;
+      if (type === "suspend") {
+        await fetch(`${baseUrl}/suspend`, { method: "PUT" });
+      } else if (type === "approve") {
+        await fetch(`${baseUrl}/approve`, { method: "PUT" });
+      } else if (type === "delete") {
+        await fetch(`${baseUrl}/delete`, { method: "DELETE" });
+      }
 
-    await loadAgents();
+      await loadAgents();
+    } catch (err) {
+      console.error("Action error:", err);
+    }
     setModal({ isOpen: false, type: "", item: null });
   };
 
@@ -173,8 +175,6 @@ const Agents = () => {
             <Footer />
           </div>
         </div>
-
-        <AddButton />
 
         <ActionModal
           key={modal.item?.uid || "none"}

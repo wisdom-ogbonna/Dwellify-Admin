@@ -10,11 +10,13 @@ import {
   X,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useNotifications } from "../../context/NotificationContext";
 
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const { pendingCount } = useNotifications();
 
   const menuItems = [
     {
@@ -24,7 +26,12 @@ function Sidebar() {
     },
     { name: "Clients", icon: <Users size={20} />, route: "/clients" },
     { name: "Agents", icon: <User2 size={20} />, route: "/agents" },
-    { name: "Verification Requests", icon: <ShieldAlert size={20} />, route: "/verification-requests" },
+    {
+      name: "Verification Requests",
+      icon: <ShieldAlert size={20} />,
+      route: "/verification-requests",
+      badge: pendingCount,
+    },
     { name: "Reports", icon: <AlertTriangle size={20} />, route: "/reports" },
     { name: "Settings", icon: <Settings size={20} />, route: "/settings" },
   ];
@@ -62,7 +69,6 @@ function Sidebar() {
           <div className="font-black text-2xl tracking-tighter uppercase">
             Dwellify-Admin
           </div>
-          {/* Close button inside sidebar for mobile */}
           <button onClick={toggleSidebar} className="md:hidden text-zinc-400">
             <X size={20} />
           </button>
@@ -79,15 +85,26 @@ function Sidebar() {
                   navigate(item.route);
                   setIsOpen(false);
                 }}
-                className={`flex items-center space-x-3 cursor-pointer p-3 rounded-lg transition-all
+                className={`flex items-center justify-between cursor-pointer p-3 rounded-lg transition-all
                   ${
                     isActive
                       ? "bg-zinc-800 text-white opacity-100"
                       : "text-zinc-400 hover:text-white hover:bg-zinc-900 opacity-80 hover:opacity-100"
                   }`}
               >
-                {item.icon}
-                <span className="font-medium">{item.name}</span>
+                <div className="flex items-center space-x-3">
+                  {item.icon}
+                  <span className="font-medium text-sm lg:text-base">
+                    {item.name}
+                  </span>
+                </div>
+
+                {/* notification pill wrapper */}
+                {!!item.badge && item.badge > 0 && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
+                    {item.badge}
+                  </span>
+                )}
               </div>
             );
           })}

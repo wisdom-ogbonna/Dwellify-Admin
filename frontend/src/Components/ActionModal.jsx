@@ -9,7 +9,7 @@ function ActionModal({ isOpen, type, targetItem, onClose, onConfirm }) {
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    if (confirmName === actualName) {
+    if (confirmName.replaceAll(" ", "") === actualName.replaceAll(" ", "")) {
       onConfirm(targetItem, type);
       setConfirmName("");
     }
@@ -19,7 +19,7 @@ function ActionModal({ isOpen, type, targetItem, onClose, onConfirm }) {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-200 flex items-center justify-center p-6">
       <div className="bg-white border-[3px] border-black p-8 rounded-[40px] w-full max-w-md shadow-[15px_15px_0px_0px_rgba(0,0,0,1)]">
         <div
-          className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border-2 border-black ${type === "delete" ? "bg-red-500" : "bg-orange-500"}`}
+          className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border-2 border-black ${type === "delete" ? "bg-red-500" :  type === "suspend" ? "bg-orange-500" : "bg-green-500"}`}
         >
           {type === "delete" ? (
             <Trash2 color="white" />
@@ -56,10 +56,10 @@ function ActionModal({ isOpen, type, targetItem, onClose, onConfirm }) {
             Cancel
           </button>
           <button
-            disabled={confirmName !== actualName}
+            disabled={confirmName.replaceAll(" ", "") !== actualName.replaceAll(" ", "")}
             onClick={handleConfirm}
             className={`flex-1 p-4 border-2 border-black rounded-2xl font-black uppercase text-xs transition-all ${
-              confirmName === actualName
+              confirmName.replaceAll(" ", "") === actualName.replaceAll(" ", "")
                 ? "bg-black text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-1 active:translate-y-1 active:shadow-none"
                 : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
             }`}
